@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import CANNON, { Body } from 'cannon';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { createSphere } from './createSphere';
 import GUI from 'lil-gui';
 
 /**
@@ -20,13 +21,6 @@ const canvas = document.querySelector('canvas.webgl');
 const world = new CANNON.World();
 world.gravity.set(0, -0.92, 0);
 
-const sphereShape = new CANNON.Sphere(0.5);
-const sphereBody = new CANNON.Body({
-  mass: 1,
-  position: new CANNON.Vec3(0, 3, 0),
-  shape: sphereShape,
-});
-
 //Floor
 const floorShape = new CANNON.Plane();
 const floorBody = new CANNON.Body();
@@ -34,19 +28,9 @@ floorBody.mass = 0;
 floorBody.addShape(floorShape);
 floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(-1, 0, 0), Math.PI * 0.5);
 
-world.addBody(sphereBody);
 world.addBody(floorBody);
 
 // PHYSICS MATERIALS
-// const concrete = new CANNON.Material('concrete');
-// const plastic = new CANNON.Material('plastic');
-
-// const concretePlasticMaterial = new CANNON.ContactMaterial(concrete, plastic, {
-//   friction: 0.3,
-//   restitution: 0.3,
-// });
-
-// world.addContactMaterial(concretePlasticMaterial);
 
 //replace materials with default
 const defaultMaterial = new CANNON.Material('default');
@@ -60,8 +44,6 @@ const defaultContactMaterial = new CANNON.ContactMaterial(
 );
 world.addContactMaterial(defaultContactMaterial);
 world.defaultContactMaterial = defaultContactMaterial;
-// sphereBody.material = defaultMaterial;
-// floorBody.material = defaultMaterial;
 
 // Scene
 const scene = new THREE.Scene();
@@ -84,19 +66,6 @@ const environmentMapTexture = cubeTextureLoader.load([
 /**
  * Test sphere
  */
-const sphere = new THREE.Mesh(
-  new THREE.SphereGeometry(0.5, 32, 32),
-  new THREE.MeshStandardMaterial({
-    metalness: 0.3,
-    roughness: 0.4,
-    envMap: environmentMapTexture,
-    envMapIntensity: 0.5,
-  })
-);
-sphere.castShadow = true;
-sphere.position.y = 0.5;
-
-scene.add(sphere);
 
 /**
  * Floor
@@ -115,6 +84,16 @@ floor.receiveShadow = true;
 floor.rotation.x = -Math.PI * 0.5;
 scene.add(floor);
 
+const updatabales = [];
+const sphere = createSphere(
+  0.5,
+  { x: 0, y: 3, z: 0 },
+  defaultMaterial,
+  environmentMapTexture,
+  scene,
+  world,
+  updatabales
+);
 /**
  * Lights
  */
@@ -201,8 +180,9 @@ const tick = () => {
   //Update Physics
   world.step(1 / 60, deltaTime, 3);
   //update sphere body pos
-  sphere.position.copy(sphereBody.position);
-
+  for (const object of objectsToUpdate) {
+    object.mesh.position.copy(object.body.position);
+  }
   // Render
   renderer.render(scene, camera);
 
