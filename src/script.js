@@ -37,6 +37,17 @@ floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(-1, 0, 0), Math.PI * 0.5);
 world.addBody(sphereBody);
 world.addBody(floorBody);
 
+// PHYSICS MATERIALS
+const concrete = new CANNON.Material('concrete');
+const plastic = new CANNON.Material('plastic');
+
+const concretePlasticMaterial = new CANNON.ContactMaterial(concrete, plastic, {
+  friction: 0.3,
+  restitution: 0.3,
+});
+
+world.add(concretePlasticMaterial);
+
 // Scene
 const scene = new THREE.Scene();
 
