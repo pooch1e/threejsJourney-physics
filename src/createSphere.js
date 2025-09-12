@@ -6,12 +6,11 @@ export const createSphere = (
   defaultMaterial,
   environmentMapTexture,
   scene,
-  world,
-  updatables
+  world
 ) => {
   //3js Mesh
 
-  const sphere = new THREE.Mesh(
+  const mesh = new THREE.Mesh(
     new THREE.SphereGeometry(radius, 20, 20),
     new THREE.MeshStandardMaterial({
       metalness: 0.3,
@@ -20,9 +19,9 @@ export const createSphere = (
       envMapIntensity: 0.5,
     })
   );
-  sphere.castShadow = true;
-  sphere.position.copy(position);
-  scene.add(sphere);
+  mesh.castShadow = true;
+  mesh.position.copy(position);
+  scene.add(mesh);
 
   //cannon body
   const cannonSphere = new CANNON.Sphere(radius);
@@ -34,5 +33,6 @@ export const createSphere = (
   });
   body.position.copy(position);
   world.addBody(body);
-  return updatables.push(sphere, body);
+
+  return { mesh, body };
 };

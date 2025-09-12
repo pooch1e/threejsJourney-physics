@@ -85,14 +85,23 @@ floor.rotation.x = -Math.PI * 0.5;
 scene.add(floor);
 
 const updatabales = [];
-const sphere = createSphere(
-  0.5,
-  { x: 0, y: 3, z: 0 },
-  defaultMaterial,
-  environmentMapTexture,
-  scene,
-  world,
-  updatabales
+// const sphere = createSphere(
+//   0.5,
+//   { x: 0, y: 3, z: 0 },
+//   defaultMaterial,
+//   environmentMapTexture,
+//   scene,
+//   world
+// );
+updatabales.push(
+  createSphere(
+    0.5,
+    { x: 0, y: 3, z: 0 },
+    defaultMaterial,
+    environmentMapTexture,
+    scene,
+    world
+  )
 );
 /**
  * Lights
@@ -169,9 +178,25 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 const clock = new THREE.Clock();
 let oldElapsedTime = 0;
 
+// DEBUG GUI
+const debugObject = {
+  addSphere: () => {
+    const sphere = createSphere(
+      Math.random() * 0.5,
+      { x: Math.random() + 1, y: 3, z: 0 },
+      defaultMaterial,
+      environmentMapTexture,
+      scene,
+      world
+    );
+    updatabales.push(sphere);
+  },
+};
+gui.add(debugObject, 'addSphere').name('Add Sphere');
+
 const tick = () => {
   let elapsedTime = clock.getElapsedTime();
-  let deltaTime = (elapsedTime = oldElapsedTime);
+  let deltaTime = elapsedTime - oldElapsedTime;
   oldElapsedTime = elapsedTime;
 
   // Update controls
@@ -180,7 +205,7 @@ const tick = () => {
   //Update Physics
   world.step(1 / 60, deltaTime, 3);
   //update sphere body pos
-  for (const object of objectsToUpdate) {
+  for (const object of updatabales) {
     object.mesh.position.copy(object.body.position);
   }
   // Render
