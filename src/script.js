@@ -3,6 +3,7 @@ import CANNON, { Body } from 'cannon';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { createSphere } from './createSphere';
 import GUI from 'lil-gui';
+import { environmentMapTexture } from './textureConfig';
 
 /**
  * Debug
@@ -49,21 +50,6 @@ world.defaultContactMaterial = defaultContactMaterial;
 const scene = new THREE.Scene();
 
 /**
- * Textures
- */
-const textureLoader = new THREE.TextureLoader();
-const cubeTextureLoader = new THREE.CubeTextureLoader();
-
-const environmentMapTexture = cubeTextureLoader.load([
-  '/textures/environmentMaps/0/px.png',
-  '/textures/environmentMaps/0/nx.png',
-  '/textures/environmentMaps/0/py.png',
-  '/textures/environmentMaps/0/ny.png',
-  '/textures/environmentMaps/0/pz.png',
-  '/textures/environmentMaps/0/nz.png',
-]);
-
-/**
  * Test sphere
  */
 
@@ -85,20 +71,19 @@ floor.rotation.x = -Math.PI * 0.5;
 scene.add(floor);
 
 const updatabales = [];
-// const sphere = createSphere(
-//   0.5,
-//   { x: 0, y: 3, z: 0 },
-//   defaultMaterial,
-//   environmentMapTexture,
-//   scene,
-//   world
-// );
+
+const sphereMeshMaterial = new THREE.MeshStandardMaterial({
+  metalness: 0.3,
+  roughness: 0.4,
+  envMap: environmentMapTexture,
+  envMapIntensity: 0.5,
+});
 updatabales.push(
   createSphere(
     0.5,
     { x: 0, y: 3, z: 0 },
     defaultMaterial,
-    environmentMapTexture,
+    sphereMeshMaterial,
     scene,
     world
   )
@@ -185,7 +170,7 @@ const debugObject = {
       Math.random() * 0.5,
       { x: Math.random() + 1, y: 3, z: 0 },
       defaultMaterial,
-      environmentMapTexture,
+      sphereMeshMaterial,
       scene,
       world
     );

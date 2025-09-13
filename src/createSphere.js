@@ -4,7 +4,7 @@ export const createSphere = (
   radius,
   position,
   defaultMaterial,
-  environmentMapTexture,
+  sphereMeshMaterial,
   scene,
   world
 ) => {
@@ -12,12 +12,7 @@ export const createSphere = (
 
   const mesh = new THREE.Mesh(
     new THREE.SphereGeometry(radius, 20, 20),
-    new THREE.MeshStandardMaterial({
-      metalness: 0.3,
-      roughness: 0.4,
-      envMap: environmentMapTexture,
-      envMapIntensity: 0.5,
-    })
+    sphereMeshMaterial
   );
   mesh.castShadow = true;
   mesh.position.copy(position);
