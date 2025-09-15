@@ -21,6 +21,10 @@ const canvas = document.querySelector('canvas.webgl');
 
 //Sphere body
 const world = new CANNON.World();
+// for testing bodies collisions
+world.broadphase = new CANNON.SAPBroadphase(world);
+// to optomise performance with testing
+world.allowSleep = true;
 world.gravity.set(0, -0.92, 0);
 
 //Floor
@@ -78,7 +82,7 @@ const sphereMeshMaterial = new THREE.MeshStandardMaterial({
 updatabales.push(
   createSphere(
     0.5,
-    { x: 0, y: 3, z: 0 },
+    { x: 10, y: 3, z: 0 },
     defaultMaterial,
     sphereMeshMaterial,
     scene,
@@ -169,7 +173,7 @@ let oldElapsedTime = 0;
 const debugObject = {
   addSphere: () => {
     const sphere = createSphere(
-      Math.random() * 0.5,
+      Math.random() * 2,
       { x: Math.random() + 1, y: 3, z: 0 },
       defaultMaterial,
       sphereMeshMaterial,
@@ -183,7 +187,11 @@ const debugObject = {
       1,
       1.5,
       2,
-      { x: 0, y: 3, z: 0 },
+      {
+        x: (Math.random() - 0.5) * 3,
+        y: 3,
+        z: (Math.random() - 0.5) * 3,
+      },
       scene,
       world,
       defaultMaterial
@@ -207,6 +215,7 @@ const tick = () => {
   //update sphere body pos
   for (const object of updatabales) {
     object.mesh.position.copy(object.body.position);
+    object.mesh.quaternion.copy(object.body.quaternion);
   }
   // Render
   renderer.render(scene, camera);

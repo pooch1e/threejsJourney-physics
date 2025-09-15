@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon';
 import { environmentMapTexture } from './textureConfig';
+import { createSound } from './createSound';
 
 const boxGeometery = new THREE.BoxGeometry(1, 1, 1);
 const boxMaterial = new THREE.MeshStandardMaterial({
@@ -19,11 +20,11 @@ export const createBox = (
   world,
   defaultMaterial
 ) => {
-  const boxMesh = new THREE.Mesh(boxGeometery, boxMaterial);
-  boxMesh.scale.set(width, height, depth);
-  boxMesh.castShadow = true;
-  boxMesh.position.copy(position);
-  scene.add(boxMesh);
+  const mesh = new THREE.Mesh(boxGeometery, boxMaterial);
+  mesh.scale.set(width, height, depth);
+  mesh.castShadow = true;
+  mesh.position.copy(position);
+  scene.add(mesh);
 
   //cannon body
   const shape = new CANNON.Box(
@@ -39,5 +40,7 @@ export const createBox = (
   body.position.copy(position);
   world.addBody(body);
 
-  return { boxMesh, body };
+  body.addEventListener('collide', createSound);
+
+  return { mesh, body };
 };
