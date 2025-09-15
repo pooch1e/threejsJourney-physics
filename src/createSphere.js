@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon';
+import { createSound } from './createSound';
 export const createSphere = (
   radius,
   position,
@@ -28,6 +29,8 @@ export const createSphere = (
   });
   body.position.copy(position);
   world.addBody(body);
+
+  body.addEventListener('collide', createSound);
 
   return { mesh, body };
 };

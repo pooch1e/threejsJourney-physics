@@ -5,6 +5,7 @@ import { createSphere } from './createSphere';
 import GUI from 'lil-gui';
 import { environmentMapTexture } from './textureConfig';
 import { createBox } from './createBox';
+import { createSound } from './createSound';
 
 /**
  * Debug
@@ -169,6 +170,17 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 const clock = new THREE.Clock();
 let oldElapsedTime = 0;
 
+const resetButton = () => {
+  for (const object of updatabales) {
+    // Remove body
+    object.body.removeEventListener('collide', createSound);
+    world.removeBody(object.body);
+
+    // Remove mesh
+    scene.remove(object.mesh);
+  }
+};
+
 // DEBUG GUI
 const debugObject = {
   addSphere: () => {
@@ -198,9 +210,13 @@ const debugObject = {
     );
     updatabales.push(box);
   },
+  reset: () => {
+    resetButton();
+  },
 };
 gui.add(debugObject, 'addSphere').name('Add Sphere');
 gui.add(debugObject, 'addBox').name('Add Box');
+gui.add(debugObject, 'reset');
 
 const tick = () => {
   let elapsedTime = clock.getElapsedTime();
