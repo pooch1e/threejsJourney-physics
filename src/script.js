@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { createSphere } from './createSphere';
 import GUI from 'lil-gui';
 import { environmentMapTexture } from './textureConfig';
+import { createBox } from './createBox';
 
 /**
  * Debug
@@ -50,10 +51,6 @@ world.defaultContactMaterial = defaultContactMaterial;
 const scene = new THREE.Scene();
 
 /**
- * Test sphere
- */
-
-/**
  * Floor
  */
 const floor = new THREE.Mesh(
@@ -87,6 +84,11 @@ updatabales.push(
     scene,
     world
   )
+);
+
+//Cubes
+updatabales.push(
+  createBox(1, 1.5, 2, { x: 0, y: 3, z: 0 }, scene, world, defaultMaterial)
 );
 /**
  * Lights
@@ -176,8 +178,21 @@ const debugObject = {
     );
     updatabales.push(sphere);
   },
+  addBox: () => {
+    const box = createBox(
+      1,
+      1.5,
+      2,
+      { x: 0, y: 3, z: 0 },
+      scene,
+      world,
+      defaultMaterial
+    );
+    updatabales.push(box);
+  },
 };
 gui.add(debugObject, 'addSphere').name('Add Sphere');
+gui.add(debugObject, 'addBox').name('Add Box');
 
 const tick = () => {
   let elapsedTime = clock.getElapsedTime();
